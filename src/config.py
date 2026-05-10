@@ -24,6 +24,10 @@ class DatabaseConfig(BaseModel):
     port: int = 5432
     name: str
 
+    pool_size: int = 20
+    max_overflow: int = 5
+    echo: bool = False
+
     @property
     def url(self) -> URL:
         return URL.create(
