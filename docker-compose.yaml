@@ -3,9 +3,9 @@ services:
     image: pgvector/pgvector:pg16
     restart: always
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydatabase
+      POSTGRES_USER: ${MY_APP__DB__USER}
+      POSTGRES_PASSWORD: ${MY_APP__DB__PASSWORD}
+      POSTGRES_DB: ${MY_APP__DB__NAME}
     ports:
       - "5432:5432"
     volumes:
