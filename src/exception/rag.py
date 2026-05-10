@@ -1,0 +1,2 @@
+class RagContentTypeException(Exception):
+    pass
