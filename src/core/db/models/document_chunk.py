@@ -4,7 +4,7 @@ from datetime import datetime
 from uuid import UUID, uuid4
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import TEXT, func
+from sqlalchemy import TEXT, func, Index
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -19,3 +19,13 @@ class DocumentChunk(Base):
     metadata_: Mapped[dict] = mapped_column("metadata", JSONB)
     embedding: Mapped[list[float]] = mapped_column(Vector(384))  # dim of sentence-transformers/all-MiniLM-L6-v2
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+    __table_args__ = (
+        Index(
+            "ix_document_chunk_embedding",
+            "embedding",
+            postgresql_using="hnsw",
+            postgresql_with={"m": 16, "ef_construction": 64},
+            postgresql_ops={"embedding": "vector_cosine_ops"},
+        ),
+    )
