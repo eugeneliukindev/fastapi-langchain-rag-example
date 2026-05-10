@@ -1,29 +1,17 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Literal
 
-from pydantic import BaseModel, PostgresDsn, SecretStr
+from pydantic import BaseModel, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import URL
-
-if TYPE_CHECKING:
-    pass
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-class OllamaLLMConfig(BaseModel):
-    model: str
-    base_url: str
-
-
-class LLMConfig(BaseModel):
-    ollama: OllamaLLMConfig
-
-
 class DatabaseConfig(BaseModel):
-    driver: PostgresDsn = "postgresql+asyncpg"
+    driver: str = "postgresql+asyncpg"
     user: str
     password: SecretStr
     host: str = "localhost"
@@ -46,15 +34,35 @@ class DatabaseConfig(BaseModel):
         )
 
 
+class AIConfig(BaseModel):
+    class LLMConfig(BaseModel):
+        class OllamaConfig(BaseModel):
+            model: str
+            base_url: str
+
+        ollama: OllamaConfig
+
+    class EmbeddingModelConfig(BaseModel):
+        class HuggingFaceConfig(BaseModel):
+            model: str = "sentence-transformers/all-MiniLM-L6-v2"
+            device: Literal["cuda", "cpu"] = "cpu"
+
+        hf: HuggingFaceConfig
+
+    llm: LLMConfig
+    embedding: EmbeddingModelConfig
+
+
 class Settings(BaseSettings):
     db: DatabaseConfig
-    llm: LLMConfig
+    ai: AIConfig
 
     model_config = SettingsConfigDict(
         env_file=[BASE_DIR / ".env.example", BASE_DIR / ".env"],
         case_sensitive=False,
         env_prefix="MY_APP__",
         env_nested_delimiter="__",
+        extra="ignore",
     )
 
 
