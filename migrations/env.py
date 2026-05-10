@@ -7,6 +7,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from config import settings
+from core.db.models import Base
 
 logging.basicConfig(
     format="%(levelname)-5.5s [%(name)s] %(message)s",
@@ -24,7 +25,7 @@ config.set_main_option("sqlalchemy.url", settings.db.url.render_as_string(hide_p
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
