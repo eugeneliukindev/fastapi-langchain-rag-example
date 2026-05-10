@@ -13,15 +13,15 @@ if TYPE_CHECKING:
 
 class DatabaseManager:
     def __init__(self, url: str | URL, **kwargs: Any):
-        self._engine = create_async_engine(url=url, **kwargs)
-        self._session_maker = async_sessionmaker(
-            bind=self._engine,
+        self.engine = create_async_engine(url=url, **kwargs)
+        self.session_maker = async_sessionmaker(
+            bind=self.engine,
             expire_on_commit=False,
             autoflush=False,
         )
 
     async def session_getter(self) -> AsyncGenerator[AsyncSession]:
-        async with self._session_maker() as session:
+        async with self.session_maker() as session:
             yield session
 
 
