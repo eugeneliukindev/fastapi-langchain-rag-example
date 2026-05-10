@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from collections.abc import AsyncGenerator
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Annotated, Any
 
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from config import settings
@@ -31,3 +32,5 @@ db_manager = DatabaseManager(
     max_overflow=settings.db.max_overflow,
     echo=settings.db.echo,
 )
+
+SessionDep = Annotated[AsyncSession, Depends(db_manager.session_getter)]
