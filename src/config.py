@@ -13,7 +13,13 @@ if TYPE_CHECKING:
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-class LLMConfig(BaseModel): ...
+class OllamaLLMConfig(BaseModel):
+    model: str
+    base_url: str
+
+
+class LLMConfig(BaseModel):
+    ollama: OllamaLLMConfig
 
 
 class DatabaseConfig(BaseModel):
@@ -42,7 +48,7 @@ class DatabaseConfig(BaseModel):
 
 class Settings(BaseSettings):
     db: DatabaseConfig
-    # llm: LLMConfig
+    llm: LLMConfig
 
     model_config = SettingsConfigDict(
         env_file=[BASE_DIR / ".env.example", BASE_DIR / ".env"],
