@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from api.v1.rag import router
-from core.db import db_manager
+from core.db.manager import db_manager
 
 
 @asynccontextmanager

@@ -1,12 +1,12 @@
 import asyncio
 import logging
+import os
 
 from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from config import settings
 from core.db.models import Base
 
 logging.basicConfig(
@@ -15,22 +15,20 @@ logging.basicConfig(
     level=logging.WARN,
 )
 logging.getLogger("alembic").setLevel(logging.INFO)
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
-config = context.config
-config.set_main_option("sqlalchemy.url", settings.db.url.render_as_string(hide_password=False))
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
+target_metadata = Base.metadata
+config = context.config
+
+user = os.environ.get("MY_APP__DB__USER") or os.environ["POSTGRES_USER"]
+password = os.environ.get("MY_APP__DB__PASSWORD") or os.environ["POSTGRES_PASSWORD"]
+host = os.environ.get("MY_APP__DB__HOST") or os.environ.get("POSTGRES_HOST", "localhost")
+port = os.environ.get("MY_APP__DB__PORT") or os.environ.get("POSTGRES_PORT", "5432")
+name = os.environ.get("MY_APP__DB__NAME") or os.environ["POSTGRES_DB"]
+
+config.set_main_option(
+    "sqlalchemy.url",
+    f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{name}",
+)
 
 
 def run_migrations_offline() -> None:
