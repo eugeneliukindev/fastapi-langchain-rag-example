@@ -17,10 +17,11 @@ dependencies = [
     "pgvector>=0.4.2",
     "pydantic>=2.13.4",
     "pydantic-settings>=2.14.1",
+    "pymupdf>=1.27.2.3",
     "pypdf>=6.11.0",
     "python-dotenv>=1.2.2",
     "sentence-transformers>=5.4.1",
-    "sqlalchemy[mypy]>=2.0.49",
+    "sqlalchemy>=2.0.49",
     "uvicorn>=0.46.0",
 ]
 
@@ -28,7 +29,15 @@ dependencies = [
 [dependency-groups]
 dev = [
     "mypy>=2.0.0",
+    "sqlalchemy[mypy]>=2.0.49",
+    
     "ruff>=0.15.12",
+]
+migrations = [
+    "alembic>=1.18.4",
+    "asyncpg>=0.31.0",
+    "pgvector>=0.4.2",
+    "sqlalchemy>=2.0.49",
 ]
 
 [tool.mypy]
