@@ -15,7 +15,7 @@ class RagRepo:
         self,
         texts: list[str],
         embeddings: list[list[float]],
-        metadatas: list[dict],
+        metadatas: list[dict[str, object]],
     ) -> None:
         stmt = insert(DocumentChunk).values(
             [
@@ -32,7 +32,7 @@ class RagRepo:
     async def similar_documents(
         self,
         embedding: list[float],
-        limit: int = 5,
+        limit: int = 3,
     ) -> list[DocumentChunk]:
         # fmt: off
         stmt = (

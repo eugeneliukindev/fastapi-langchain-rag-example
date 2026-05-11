@@ -11,10 +11,10 @@ router = APIRouter(
 
 
 @router.post("/upload-pdf")
-async def upload_pdf(file: UploadFile, service: Annotated[RagService, Depends()]):
+async def upload_pdf(file: UploadFile, service: Annotated[RagService, Depends()]) -> None:
     await service.upload_pdf(file)
 
 
 @router.get("/ask-pdf")
-async def ask_pdf(q: Annotated[str, Query(min_length=1)], service: Annotated[RagService, Depends()]):
+async def ask_pdf(q: Annotated[str, Query(min_length=1)], service: Annotated[RagService, Depends()]) -> str:
     return await service.ask_pdf(q)

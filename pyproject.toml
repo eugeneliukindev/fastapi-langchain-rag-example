@@ -35,6 +35,7 @@ extra_checks = true
 strict = true
 strict_equality_for_none = true
 warn_unreachable = true
+ignore_missing_imports = true
 
 plugins = [
     "pydantic.mypy",
@@ -89,6 +90,7 @@ file_template = "%%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(r
 
 # additional paths to be prepended to sys.path. defaults to the current working directory.
 prepend_sys_path = [
+    ".",
     "./src"
 ]
 

@@ -16,8 +16,8 @@ class DocumentChunk(Base):
 
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     content: Mapped[str] = mapped_column(TEXT)
-    metadata_: Mapped[dict] = mapped_column("metadata", JSONB)
-    embedding: Mapped[list[float]] = mapped_column(Vector(384))  # dim of sentence-transformers/all-MiniLM-L6-v2
+    metadata_: Mapped[dict[str, object]] = mapped_column("metadata", JSONB)
+    embedding: Mapped[list[float]] = mapped_column(Vector(1024))  # dim of sentence-transformers/all-MiniLM-L6-v2
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
     __table_args__ = (
