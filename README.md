@@ -70,7 +70,10 @@ MY_APP__DB__NAME=db
 MY_APP__DB__USER=user
 MY_APP__DB__PASSWORD=password
 
-# Ollama — host.docker.internal resolves to the Docker host on both Linux and macOS
+# LLM — base_url options:
+#   http://host.docker.internal:12434  — Docker Model Runner on the same machine (host.docker.internal resolves to the Docker host on Linux and macOS)
+#   http://host.docker.internal:11434  — Ollama on the same machine
+#   http://<ip>:11434                  — Ollama on a remote server
 MY_APP__AI__LLM__OLLAMA__MODEL=ai/gemma4
 MY_APP__AI__LLM__OLLAMA__BASE_URL=http://host.docker.internal:12434
 
@@ -87,17 +90,29 @@ All variables are prefixed with `MY_APP__` and use `__` as the nested delimiter.
 
 Interactive docs available at [http://localhost:8000/docs](http://localhost:8000/docs).
 
-### Upload a PDF
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/rag/upload-pdf` | Upload a PDF and index it |
+| `GET` | `/rag/ask-pdf?q=...` | Ask a question, returns plain text |
+
+## Full cycle example
 
 ```bash
+# 1. Pull and start the LLM (Docker Model Runner)
+docker model pull ai/gemma4
+docker model run ai/gemma4
+
+# 2. Configure
+cp .env.example .env
+# edit .env: set HF_TOKEN, adjust model names and device if needed
+
+# 3. Start the app
+docker compose up
+
+# 4. Upload a PDF
 curl -X POST http://localhost:8000/rag/upload-pdf \
   -F "file=@document.pdf"
-```
 
-### Ask a question
-
-```bash
+# 5. Ask a question
 curl "http://localhost:8000/rag/ask-pdf?q=What+is+the+document+about"
 ```
-
-Returns a plain-text answer grounded in the uploaded documents.
