@@ -28,7 +28,7 @@ class RagService:
             document_chunks = splitter.split_documents(documents)
 
             texts = [chunk.page_content for chunk in document_chunks]
-            embeddings = hf_embeddings.embed_documents(texts)
+            embeddings = await hf_embeddings.aembed_documents(texts)
             metadatas = [chunk.metadata for chunk in document_chunks]
 
             await self.repo.add_documents(
@@ -39,7 +39,7 @@ class RagService:
             await self.session.commit()
 
     async def ask_pdf(self, query: str) -> str:
-        embedding = hf_embeddings.embed_query(query)
+        embedding = await hf_embeddings.aembed_query(query)
         chunks = await self.repo.similar_documents(embedding)
 
         context = "\n\n".join(chunk.content for chunk in chunks)
