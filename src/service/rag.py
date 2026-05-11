@@ -1,13 +1,13 @@
 from fastapi import UploadFile
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_core.document_loaders import Blob
 
 from core.ai.chain.ollama import chain
+from core.ai.documents.parser import pdf_parser
 from core.ai.documents.text_splitter import splitter
 from core.ai.embeddings.hf import hf_embeddings
 from core.db.manager import SessionDep
 from exception.rag import RagContentTypeException
 from repo.rag import RagRepoDep
-from tmp import create_tmp_file_from_bytes
 
 
 class RagService:
@@ -20,23 +20,23 @@ class RagService:
             raise RagContentTypeException
 
         file_bytes = await file.read()
-        with create_tmp_file_from_bytes(file_bytes, "pdf") as tmp_file:
-            documents = PyPDFLoader(tmp_file).load()
-            for doc in documents:
-                doc.metadata["filename"] = file.filename
+        blob = Blob.from_data(file_bytes, mime_type="application/pdf")
+        documents = pdf_parser.parse(blob)
+        for doc in documents:
+            doc.metadata["filename"] = file.filename
 
-            document_chunks = splitter.split_documents(documents)
+        document_chunks = splitter.split_documents(documents)
 
-            texts = [chunk.page_content for chunk in document_chunks]
-            embeddings = await hf_embeddings.aembed_documents(texts)
-            metadatas = [chunk.metadata for chunk in document_chunks]
+        texts = [chunk.page_content for chunk in document_chunks]
+        embeddings = await hf_embeddings.aembed_documents(texts)
+        metadatas = [chunk.metadata for chunk in document_chunks]
 
-            await self.repo.add_documents(
-                texts=texts,
-                embeddings=embeddings,
-                metadatas=metadatas,
-            )
-            await self.session.commit()
+        await self.repo.add_documents(
+            texts=texts,
+            embeddings=embeddings,
+            metadatas=metadatas,
+        )
+        await self.session.commit()
 
     async def ask_pdf(self, query: str) -> str:
         embedding = await hf_embeddings.aembed_query(query)
