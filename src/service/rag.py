@@ -43,7 +43,6 @@ class RagService:
         chunks = await self.repo.similar_documents(embedding)
 
         context = "\n\n".join(chunk.content for chunk in chunks)
-        print(context)
         response = await chain.ainvoke(
             {
                 "context": context,
