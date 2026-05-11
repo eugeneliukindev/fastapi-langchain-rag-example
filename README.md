@@ -78,7 +78,9 @@ MY_APP__AI__LLM__OLLAMA__MODEL=ai/gemma4
 MY_APP__AI__LLM__OLLAMA__BASE_URL=http://host.docker.internal:12434
 
 # HuggingFace embedding model
-MY_APP__AI__EMBEDDING__HF__MODEL=ai-forever/ru-en-RoSBERTa
+# The model's output dimensions must match the Vector(N) size in the migration (currently 1024).
+# If you change the model, create a new migration with the correct dimensions.
+MY_APP__AI__EMBEDDING__HF__MODEL=ai-forever/ru-en-RoSBERTa  # 1024 dims
 MY_APP__AI__EMBEDDING__HF__DEVICE=cuda   # or cpu
 
 HF_TOKEN=hf_...
